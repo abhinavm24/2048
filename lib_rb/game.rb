@@ -13,7 +13,7 @@ class Game
   def initialize
     @board = generate
     # set 2 tiles to "2"
-    while @board.reject { |n| n == 0 }.size < 2
+    while @board.reject { |n| n == 0 }.size < 2 do
       @board[rand(0...16)] = 2
     end
   end
