@@ -1,4 +1,10 @@
 import random
+from itertools import zip_longest
+
+# credit: https://stackoverflow.com/a/434411/3991555, slightly modified
+def grouper(iterable, n, fillvalue=None):
+  args = [iter(iterable)] * n
+  return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
 
 class Game:
   def __init__(self):
@@ -21,13 +27,24 @@ class Game:
   def highest_tile(self):
     return max(self.board)
 
-  def group(self, row_column, array=None):
+  def group(self, grouping, array=None):
     array = array if array is not None else self.board
-    return []
+    # group into nested list of lists, 4 items each
+    nested_array = grouper(array, 4)
+    if grouping == 'columns':
+      # transpose - credit: https://stackoverflow.com/a/6473724/3991555
+      nested_array = list(map(list, zip(*nested_array)))
+    return nested_array
 
-  def ungroup(self, row_column, array=None):
+  def ungroup(self, grouping, array=None):
     array = array if array is not None else self.board
-    return []
+    flat_array = array[:]
+    # transpose
+    if grouping == 'columns':
+      flat_array = list(map(list, zip(*flat_array)))
+    # flatten - credit: https://stackoverflow.com/a/952952/3991555
+    flat_array = [item for sublist in flat_array for item in sublist]
+    return flat_array
 
   def update(self, new_board, fake = False):
     return self.board
