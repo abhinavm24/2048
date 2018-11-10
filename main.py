@@ -11,7 +11,7 @@ if player_type.strip() == 'y':
 else:
   player = Bot()
   tiles = []
-  for i in range(100000):
+  for i in range(1000):
     tiles.append(player.play())
   highest_tile = max(tiles)
 print("highest tile {highest}".format(highest = highest_tile))
