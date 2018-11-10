@@ -11,9 +11,10 @@ def grouper(iterable, n, fillvalue=None):
 # inspired by https://docs.python.org/3.1/howto/functional.html
 compose2 = lambda f, g: lambda *x: f(g(*x))
 compose = lambda *x: reduce(compose2, list(x))
-map_list = compose(list, partial(map, list))
+list_map = compose(list, map)
+map_to_list = compose(list, partial(map, list))
 # transpose - credit: https://stackoverflow.com/a/6473724/3991555
-transpose = compose(map_list, zip)
+transpose = compose(map_to_list, zip)
 # flatten - credit: https://stackoverflow.com/a/952952/3991555
 flatten = lambda nested_array: [item for sublist in nested_array for item in sublist]
 
@@ -63,30 +64,28 @@ class Game:
       self.board = new_board
       # find a random index that is currently "0" and make it a "2"
       zero_pieces = filter(lambda tuple: tuple[1] == 0, enumerate(self.board))
-      zero_indices = map(lambda tuple: tuple[0], zero_pieces)
+      zero_indices = list_map(lambda tuple: tuple[0], zero_pieces)
       random_index = random.choice(zero_indices)
       self.board[random_index] = 2
       return self.board
 
   def move(self, direction, fake = False):
     if direction == 'up':
-      lines = group('columns')
-      new_lines = map(collapse_line, lines)
-      update(ungroup('columns', new_lines), fake)
+      lines = self.group('columns')
+      new_lines = list_map(self.collapse_line, lines)
+      self.update(self.ungroup('columns', new_lines), fake)
     elif direction == 'down':
-      lines = group('columns', map(reversed, self.board))
-      new_lines = map(collapse_line, lines)
-      update(ungroup('columns', map(reversed, new_lines)), fake)
+      lines = list_map(reversed, self.group('columns'))
+      new_lines = list_map(self.collapse_line, lines)
+      self.update(self.ungroup('columns', list_map(reversed, new_lines)), fake)
     elif direction == 'left':
-      lines = group('rows')
-      new_lines = map(collapse_line, lines)
-      update(ungroup('rows', new_lines), fake)
+      lines = self.group('rows')
+      new_lines = list_map(self.collapse_line, lines)
+      self.update(self.ungroup('rows', new_lines), fake)
     elif direction == 'right':
-      lines = group('rows', map(reversed, self.board))
-      new_lines = map(collapse_line, lines)
-      update(ungroup('rows', map(reversed, new_lines)), fake)
-    else:
-      print('invalid move')
+      lines = list_map(reversed, self.group('rows'))
+      new_lines = list_map(self.collapse_line, lines)
+      self.update(self.ungroup('rows', list_map(reversed, new_lines)), fake)
 
   # move numbers to front
   # combine
