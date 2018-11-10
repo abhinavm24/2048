@@ -32,9 +32,16 @@ class Game:
       0, 0, 0, 0
     ]
 
+  # run all moves as "fake"
+  # if any move results are different from the existing board, then the game is not done
   def is_complete(self, array=None):
     array = array if array is not None else self.board
-    return False
+    result = True
+    for direction in ['up', 'down', 'left', 'right']:
+      if self.move(direction, fake = True) != array:
+        result = False
+        break
+    return result
 
   def highest_tile(self):
     return max(self.board)
@@ -73,19 +80,19 @@ class Game:
     if direction == 'up':
       lines = self.group('columns')
       new_lines = list_map(self.collapse_line, lines)
-      self.update(self.ungroup('columns', new_lines), fake)
+      return self.update(self.ungroup('columns', new_lines), fake)
     elif direction == 'down':
       lines = list_map(reversed, self.group('columns'))
       new_lines = list_map(self.collapse_line, lines)
-      self.update(self.ungroup('columns', list_map(reversed, new_lines)), fake)
+      return self.update(self.ungroup('columns', list_map(reversed, new_lines)), fake)
     elif direction == 'left':
       lines = self.group('rows')
       new_lines = list_map(self.collapse_line, lines)
-      self.update(self.ungroup('rows', new_lines), fake)
+      return self.update(self.ungroup('rows', new_lines), fake)
     elif direction == 'right':
       lines = list_map(reversed, self.group('rows'))
       new_lines = list_map(self.collapse_line, lines)
-      self.update(self.ungroup('rows', list_map(reversed, new_lines)), fake)
+      return self.update(self.ungroup('rows', list_map(reversed, new_lines)), fake)
 
   # move numbers to front
   # combine
