@@ -1,10 +1,21 @@
 import random
 from itertools import zip_longest
+from functools import reduce, partial
 
 # credit: https://stackoverflow.com/a/434411/3991555, slightly modified
 def grouper(iterable, n, fillvalue=None):
   args = [iter(iterable)] * n
   return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
+
+# build up some functional elements
+# inspired by https://docs.python.org/3.1/howto/functional.html
+compose2 = lambda f, g: lambda *x: f(g(*x))
+compose = lambda *x: reduce(compose2, list(x))
+map_list = compose(list, partial(map, list))
+# transpose - credit: https://stackoverflow.com/a/6473724/3991555
+transpose = compose(map_list, zip)
+# flatten - credit: https://stackoverflow.com/a/952952/3991555
+flatten = lambda nested_array: [item for sublist in nested_array for item in sublist]
 
 class Game:
   def __init__(self):
@@ -32,32 +43,48 @@ class Game:
     # group into nested list of lists, 4 items each
     nested_array = grouper(array, 4)
     if grouping == 'columns':
-      # transpose - credit: https://stackoverflow.com/a/6473724/3991555
-      nested_array = list(map(list, zip(*nested_array)))
+      nested_array = transpose(*nested_array)
     return nested_array
 
   def ungroup(self, grouping, array=None):
     array = array if array is not None else self.board
-    flat_array = array[:]
-    # transpose
+    nested_array = array[:]
     if grouping == 'columns':
-      flat_array = list(map(list, zip(*flat_array)))
+      nested_array = transpose(*nested_array)
     # flatten - credit: https://stackoverflow.com/a/952952/3991555
-    flat_array = [item for sublist in flat_array for item in sublist]
+    flat_array = flatten(nested_array)
     return flat_array
 
   def update(self, new_board, fake = False):
-    return self.board
+    if fake:
+      return new_board
+    elif self.board != new_board:
+      # set the board to the pieces
+      self.board = new_board
+      # find a random index that is currently "0" and make it a "2"
+      zero_pieces = filter(lambda tuple: tuple[1] == 0, enumerate(self.board))
+      zero_indices = map(lambda tuple: tuple[0], zero_pieces)
+      random_index = random.choice(zero_indices)
+      self.board[random_index] = 2
+      return self.board
 
   def move(self, direction, fake = False):
     if direction == 'up':
-      update()
+      lines = group('columns')
+      new_lines = map(collapse_line, lines)
+      update(ungroup('columns', new_lines), fake)
     elif direction == 'down':
-      update()
+      lines = group('columns', map(reversed, self.board))
+      new_lines = map(collapse_line, lines)
+      update(ungroup('columns', map(reversed, new_lines)), fake)
     elif direction == 'left':
-      update()
+      lines = group('rows')
+      new_lines = map(collapse_line, lines)
+      update(ungroup('rows', new_lines), fake)
     elif direction == 'right':
-      update()
+      lines = group('rows', map(reversed, self.board))
+      new_lines = map(collapse_line, lines)
+      update(ungroup('rows', map(reversed, new_lines)), fake)
     else:
       print('invalid move')
 
@@ -65,13 +92,14 @@ class Game:
   # combine
   # combining might create more zeros, so move to front again
   def collapse_line(self, line):
-    line = self.move_non_zeros_to_front(line)
-    line = self.combine_adjacent_equal_numbers(line)
-    line = self.move_non_zeros_to_front(line)
+    line = self.sort_zeros(line)
+    line = self.combine_adjacent(line)
+    line = self.sort_zeros(line)
     return line
 
   # this is kind of ugly but I can't figure out how to sort things in a more nuanced way
-  def move_non_zeros_to_front(self, line):
+  # for [0, 2, 0, 4], returns [2, 4, 0, 0]
+  def sort_zeros(self, line):
     new_line = []
     for x in line:
       if x != 0:
@@ -80,7 +108,8 @@ class Game:
       new_line.append(0)
     return new_line
 
-  def combine_adjacent_equal_numbers(self, line):
+  # for [4, 4, 2, 2], returns [8, 0, 4, 0]
+  def combine_adjacent(self, line):
     new_line = line[:]
     for i, x in enumerate(line):
       # no need to check the last value

@@ -1,7 +1,9 @@
 import sys
 sys.path.append('./lib_py')
 
-from game import Game
+from functools import partial
+
+from game import Game, compose
 
 game = Game()
 
@@ -43,3 +45,25 @@ expected_rows = [
   [13, 14, 15, 16]
 ]
 assert expected_rows == game.group('rows', original), game.group('rows', original)
+
+
+print("compose")
+
+f = lambda x: x * 2
+g = lambda x, y, z: [x, y, z]
+z = compose(f, g)
+assert [1, 2, 3, 1, 2, 3] == z(1, 2, 3), z(1, 2, 3)
+
+f1 = lambda x: x * 2
+f2 = lambda l: list(map(lambda x: x * 2, l))
+f3 = lambda x, y, z: [x, y, z]
+z = compose(f1, f2, f3)
+assert [2, 4, 6, 2, 4, 6] == z(1, 2, 3), z(1, 2, 3)
+
+
+print("partial")
+
+f = lambda x: x * 2
+g = lambda x, y, z: [x, y, z]
+z = compose(f, partial(g, 1, 2))
+assert [1, 2, 3, 1, 2, 3] == z(3), z(3)
