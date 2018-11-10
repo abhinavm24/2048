@@ -3,7 +3,6 @@ import random
 
 class Bot:
   def __init__(self):
-    self.game = Game()
     self.moves = ['up', 'down', 'left', 'right']
     self.strategies = {
       'random': self.strategy_random,
@@ -11,6 +10,7 @@ class Bot:
     }
 
   def play(self):
+    self.game = Game()
     while not self.game.is_complete():
       self.move(self.get_next_move())
     return self.game.highest_tile()
