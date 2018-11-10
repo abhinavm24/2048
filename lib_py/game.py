@@ -23,6 +23,7 @@ class Game:
     self.board = self.generate()
     while len(list(filter(lambda x: x != 0, self.board))) < 2:
       self.board[random.randint(0, len(self.board) - 1)] = 2
+    self.collapse_line = compose(self.sort_zeros, self.combine_adjacent, self.sort_zeros)
 
   def generate(self):
     return [
@@ -93,15 +94,6 @@ class Game:
       lines = list_map(reversed, self.group('rows'))
       new_lines = list_map(self.collapse_line, lines)
       return self.update(self.ungroup('rows', list_map(reversed, new_lines)), fake)
-
-  # move numbers to front
-  # combine
-  # combining might create more zeros, so move to front again
-  def collapse_line(self, line):
-    line = self.sort_zeros(line)
-    line = self.combine_adjacent(line)
-    line = self.sort_zeros(line)
-    return line
 
   # this is kind of ugly but I can't figure out how to sort things in a more nuanced way
   # for [0, 2, 0, 4], returns [2, 4, 0, 0]
