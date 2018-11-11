@@ -19,7 +19,7 @@ class Human:
       direction_trimmed = direction.replace(r"\s", "")
       self.move(direction)
 
-    return self.game.highest_tile()
+    return (self.game.highest_tile(), self.game.score_total)
 
   def display(self):
     for row in grouper(self.game.board, 4):

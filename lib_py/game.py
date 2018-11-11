@@ -24,6 +24,8 @@ class Game:
     while len(list(filter(lambda x: x != 0, self.board))) < 2:
       self.board[random.randint(0, len(self.board) - 1)] = 2
     self.collapse_line = compose(self.sort_zeros, self.combine_adjacent, self.sort_zeros)
+    self.score_total = 0
+    self.score_move = 0
 
   def generate(self):
     return [
@@ -75,9 +77,13 @@ class Game:
       zero_indices = list_map(lambda tuple: tuple[0], zero_pieces)
       random_index = random.choice(zero_indices)
       self.board[random_index] = 2
+      # add score
+      self.score_total += self.score_move
+      self.score_move = 0
       return self.board
 
   def move(self, direction, fake = False):
+    self.score_move = 0
     if direction == 'up':
       lines = self.group('columns')
       new_lines = list_map(self.collapse_line, lines)
@@ -115,5 +121,7 @@ class Game:
         break
       if new_line[i + 1] == new_line[i]:
         new_line[i + 1] = 0
-        new_line[i] *= 2
+        new_value = new_line[i] * 2
+        new_line[i] = new_value
+        self.score_move += new_value
     return new_line
