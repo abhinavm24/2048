@@ -24,7 +24,7 @@ class Game:
     while len(list(filter(lambda x: x != 0, self.board))) < 2:
       self.board[random.randint(0, len(self.board) - 1)] = 2
     self.collapse_line = compose(self.sort_zeros, self.combine_adjacent, self.sort_zeros)
-    self.score_total = 0
+    self.score = 0
     self.score_move = 0
 
   def generate(self):
@@ -78,7 +78,7 @@ class Game:
       random_index = random.choice(zero_indices)
       self.board[random_index] = 2
       # add score
-      self.score_total += self.score_move
+      self.score += self.score_move
       self.score_move = 0
       return self.board
 
@@ -125,3 +125,11 @@ class Game:
         new_line[i] = new_value
         self.score_move += new_value
     return new_line
+
+  def memoize(self):
+    self.memoized_board = self.board[:]
+    self.memoized_score = self.score
+
+  def reset(self):
+    self.board = self.memoized_board[:]
+    self.score = self.memoized_score

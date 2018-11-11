@@ -18,9 +18,11 @@ else:
   strategy = input("what strategy would you like to use? (default: highest_move) \noptions: \n{} \n".format(player.list_strategies()))
   if strategy == '':
     strategy = 'highest_move'
+  player.set_strategy(strategy)
   print("playing {} games with '{}' strategy".format(number_of_games, strategy))
   tiles = []
   for i in range(int(number_of_games)):
+    print('playing game {}'.format(i))
     tiles.append(player.play())
   highest_tile = max(list(map(lambda x: x[0], tiles)))
   # will highest tile and highest score always be the same?
