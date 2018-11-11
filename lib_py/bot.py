@@ -18,6 +18,13 @@ class Bot:
       self.move(self.get_next_move())
     return (self.game.highest_tile(), self.game.score_total)
 
+  def set_strategy(self, strategy):
+    if strategy != '' and strategy in self.strategies:
+      self.strategy = self.strategies[strategy]
+
+  def list_strategies(self):
+    return "\n".join([key for key, value in self.strategies.items()])
+
   def move(self, direction):
     self.game.move(direction)
     # print(direction)
