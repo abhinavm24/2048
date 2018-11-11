@@ -22,7 +22,7 @@ else:
   print("playing {} games with '{}' strategy".format(number_of_games, strategy))
   tiles = []
   for i in range(int(number_of_games)):
-    print('playing game {}'.format(i))
+    print('playing game {}'.format(i + 1))
     tiles.append(player.play())
   highest_tile = max(list(map(lambda x: x[0], tiles)))
   # will highest tile and highest score always be the same?
