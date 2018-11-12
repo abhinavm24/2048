@@ -106,7 +106,7 @@ class Bot:
         before_board = self.game.board[:]
         self.game.move(direction)
         # if any move results in no change, then break
-        if before_board == self.game.board
+        if before_board == self.game.board:
           break
       result['score'] = self.game.score
       results.append(result)
