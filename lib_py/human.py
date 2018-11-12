@@ -3,7 +3,7 @@ from game import Game, grouper
 class Human:
   def __init__(self):
     self.game = Game()
-    self.moves = {
+    self.directions = {
       "\x1b[A": 'up',
       "\x1b[C": 'right',
       "\x1b[D": 'left',
@@ -33,7 +33,7 @@ class Human:
 
   def get_direction(self, direction):
     try:
-      return self.moves[direction]
+      return self.directions[direction]
     except:
       return 'invalid move'
 

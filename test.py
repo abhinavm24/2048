@@ -4,6 +4,7 @@ sys.path.append('./lib_py')
 from functools import partial
 
 from game import Game, compose
+from bot import dedupe
 
 game = Game()
 
@@ -67,3 +68,8 @@ f = lambda x: x * 2
 g = lambda x, y, z: [x, y, z]
 z = compose(f, partial(g, 1, 2))
 assert [1, 2, 3, 1, 2, 3] == z(3), z(3)
+
+
+print("dedupe")
+
+assert [(1, 2), (2, 3), (3, 4)] == list(dedupe([(1, 2), (2, 3), (3, 4), (1, 2), (2, 3), (3, 4)])), dedupe([(1, 2), (2, 3), (3, 4), (1, 2), (2, 3), (3, 4)])

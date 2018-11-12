@@ -126,10 +126,10 @@ class Game:
         self.score_move += new_value
     return new_line
 
-  def memoize(self):
-    self.memoized_board = self.board[:]
-    self.memoized_score = self.score
+  def save(self):
+    self.__saved_board = self.board[:]
+    self.__saved_score = self.score
 
   def reset(self):
-    self.board = self.memoized_board[:]
-    self.score = self.memoized_score
+    self.board = self.__saved_board[:]
+    self.score = self.__saved_score

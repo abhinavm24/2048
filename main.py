@@ -3,6 +3,7 @@ sys.path.append('./lib_py')
 
 from human import Human
 from bot import Bot
+import operator
 
 player_type = input("are you human? (y/n): ")
 if player_type.strip() == 'y':
@@ -24,8 +25,10 @@ else:
   for i in range(int(number_of_games)):
     print('playing game {}'.format(i + 1))
     tiles.append(player.play())
-  highest_tile = max(list(map(lambda x: x[0], tiles)))
-  # will highest tile and highest score always be the same?
-  score = max(list(map(lambda x: x[1], tiles)))
+  highest = max(tiles, key=operator.itemgetter('score'))
+  highest_tile = highest['highest_tile']
+  score = highest['score']
+  board = highest['board']
+  player.display(board)
 print("score = {} | highest tile {}".format(score, highest_tile))
 
