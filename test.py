@@ -73,3 +73,13 @@ assert [1, 2, 3, 1, 2, 3] == z(3), z(3)
 print("dedupe")
 
 assert [(1, 2), (2, 3), (3, 4)] == list(dedupe([(1, 2), (2, 3), (3, 4), (1, 2), (2, 3), (3, 4)])), dedupe([(1, 2), (2, 3), (3, 4), (1, 2), (2, 3), (3, 4)])
+
+
+print('is_complete')
+board = [64, 2048, 256, 128, 32, 256, 32, 8, 8, 16, 4, 0, 4, 2, 0, 0]
+game.board = board
+assert game.is_complete(board) != True, game.board
+assert game.move('up', fake = True) == game.board, "{}, {}".format(game.move('up', fake = True), game.board)
+assert game.move('down', fake = True) != game.board, "{}, {}".format(game.move('down', fake = True), game.board)
+assert game.move('left', fake = True) == game.board, "{}, {}".format(game.move('left', fake = True), game.board)
+assert game.move('right', fake = True) != game.board, "{}, {}".format(game.move('right', fake = True), game.board)

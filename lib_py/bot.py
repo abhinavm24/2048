@@ -11,29 +11,30 @@ def dedupe(my_list):
 
 
 class Bot:
-  def __init__(self, strategy='highest_move'):
+  def __init__(self):
     self.directions = ['up', 'down', 'left', 'right']
     self.preferred_directions = ['up', 'left', 'right']
-    self.strategies = {
-      'random': self.strategy_random,
-      'alex': self.strategy_alex,
-      'highest_move': self.strategy_max_move_score,
-      'forward_3': self.strategy_look_forward_3,
-      'forward_3_pref': self.strategy_look_forward_3_preferred,
-      'forward_5': self.strategy_look_forward_5,
-      'forward_5_pref': self.strategy_look_forward_5_preferred,
-      'forward_3_product': self.strategy_look_forward_3_product,
-      'forward_3_pref_prod': self.strategy_look_forward_3_preferred_product,
-      'forward_5_pref_prod': self.strategy_look_forward_5_preferred_product,
-      'forward_4_prod': self.strategy_look_forward_4_product
-    }
-    self.strategy = self.strategies[strategy]
+    self.strategies = [
+      {'name': 'random', 'func': self.strategy_random},
+      {'name': 'alex', 'func': self.strategy_alex},
+      {'name': 'highest_move', 'func': self.strategy_max_move_score},
+      {'name': 'forward_3', 'func': self.strategy_look_forward_3},
+      {'name': 'forward_3_pref', 'func': self.strategy_look_forward_3_preferred},
+      {'name': 'forward_5', 'func': self.strategy_look_forward_5},
+      {'name': 'forward_5_pref', 'func': self.strategy_look_forward_5_preferred},
+      {'name': 'forward_3_product', 'func': self.strategy_look_forward_3_product},
+      {'name': 'forward_3_pref_prod', 'func': self.strategy_look_forward_3_preferred_product},
+      {'name': 'forward_5_pref_prod', 'func': self.strategy_look_forward_5_preferred_product},
+      {'name': 'forward_4_prod', 'func': self.strategy_look_forward_4_product}
+    ]
+    self.default_strategy = 2
 
   def play(self):
     self.game = Game()
     while not self.game.is_complete():
-      self.move(self.get_next_move())
-      # print(self.game.board)
+      next_move = self.get_next_move()
+      # print(next_move, self.game.highest_tile(), self.game.score, self.game.board)
+      self.move(next_move)
     return {
       'highest_tile': self.game.highest_tile(),
       'score': self.game.score,
@@ -46,11 +47,16 @@ class Bot:
       print(' '.join(map(str, row)))
 
   def set_strategy(self, strategy):
-    if strategy != '' and strategy in self.strategies:
-      self.strategy = self.strategies[strategy]
+    try:
+      strategy = int(strategy)
+      assert strategy >= 0 and strategy < len(self.strategies)
+    except:
+      strategy = self.default_strategy
+    self.strategy = self.strategies[strategy]['func']
+    return self.strategies[strategy]['name']
 
   def list_strategies(self):
-    return "\n".join([key for key, value in self.strategies.items()])
+    return "\n".join(["{}: {} {}".format(i, strategy['name'], '(default)' if i == self.default_strategy else '') for i, strategy in enumerate(self.strategies)])
 
   def move(self, direction):
     self.game.move(direction)
@@ -117,7 +123,7 @@ class Bot:
     # fallback if
     #   no move will score
     #   moving in the best "long term" way does not result in a change
-    if highest_value == 0 or self.game.move(sequence[0], fake = True) == self.game.board:
+    if highest_value == 0 or self.game.move(highest_direction, fake = True) == self.game.board:
       highest_direction = self.strategy_alex()
     return highest_direction
 

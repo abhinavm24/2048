@@ -11,20 +11,26 @@ if player_type.strip() == 'y':
   (highest_tile, score) = player.play()
 else:
   player = Bot()
+
+  # get number of games to play
   number_of_games = input("how many games would you like to play? (default: 100) ")
   try:
     int(number_of_games)
   except:
     number_of_games = 100
-  strategy = input("what strategy would you like to use? (default: highest_move) \noptions: \n{} \n".format(player.list_strategies()))
-  if strategy == '':
-    strategy = 'highest_move'
-  player.set_strategy(strategy)
+
+  # get strategy to play with
+  strategy = input("what strategy would you like to use? (enter a number)\n{} \n".format(player.list_strategies()))
+  strategy = player.set_strategy(strategy)
+  
+  # play number of games with desired strategy
   print("playing {} games with '{}' strategy".format(number_of_games, strategy))
   tiles = []
   for i in range(int(number_of_games)):
     print('playing game {}'.format(i + 1))
     tiles.append(player.play())
+
+  # get highest score from all the games played
   highest = max(tiles, key=operator.itemgetter('score'))
   highest_tile = highest['highest_tile']
   score = highest['score']
