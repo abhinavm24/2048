@@ -1,5 +1,5 @@
 import sys
-sys.path.append('./lib_py')
+sys.path.append('./lib')
 
 from functools import partial
 

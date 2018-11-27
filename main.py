@@ -1,5 +1,5 @@
 import sys
-sys.path.append('./lib_py')
+sys.path.append('./lib')
 
 from human import Human
 from bot import Bot

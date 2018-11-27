@@ -1,4 +1,4 @@
-$LOAD_PATH << File.expand_path('lib_rb')
+$LOAD_PATH << File.expand_path('lib')
 
 require 'game'
 require 'human'

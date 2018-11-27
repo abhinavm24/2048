@@ -6,7 +6,7 @@ Requirements
 
 To play
 1. choose your language
-2. run `<interpretter> main.<extension>`, e.g. `python main.py`
+2. run `python main.py`
 3. choose bot or human
 4. if human:
     1. press an arrow key, then "enter" to move
@@ -16,3 +16,7 @@ To play
     3. highest game, score, and tile will be displayed at end
 
 Bot strategies must always return a string corresponding to a move: `up`, `down`, `left`, or `right`.
+
+## Ruby
+
+There is a ruby version too. It is not as finished and not very many bot strategies exist. You can find it in the `ruby` directory
