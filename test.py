@@ -3,10 +3,12 @@ sys.path.append('./lib')
 
 from functools import partial
 
-from game import Game, compose
-from bot import dedupe
+from game import Game
+from bot import Bot, dedupe
+from util import compose
 
 game = Game()
+bot = Bot()
 
 assert True == True, 'sanity check'
 
@@ -83,3 +85,9 @@ assert game.move('up', fake = True) == game.board, "{}, {}".format(game.move('up
 assert game.move('down', fake = True) != game.board, "{}, {}".format(game.move('down', fake = True), game.board)
 assert game.move('left', fake = True) == game.board, "{}, {}".format(game.move('left', fake = True), game.board)
 assert game.move('right', fake = True) != game.board, "{}, {}".format(game.move('right', fake = True), game.board)
+
+print('put_board_in_priority_order')
+
+board = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+bot.game.board = board
+assert bot.put_board_in_priority_order() == [0, 1, 2, 3, 7, 6, 5, 4, 8, 9, 10, 11, 15, 14, 13, 12], bot.put_board_in_priority_order()

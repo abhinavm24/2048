@@ -1,4 +1,6 @@
 from game import Game, grouper
+from util import display_board
+from functools import partial
 
 class Human:
   def __init__(self):
@@ -22,8 +24,7 @@ class Human:
     return (self.game.highest_tile(), self.game.score)
 
   def display(self):
-    for row in grouper(self.game.board, 4):
-      print(' '.join(map(str, row)))
+    return display_board(self.game.board)
 
   def move(self, direction):
     human_readable_move = self.get_direction(direction)
