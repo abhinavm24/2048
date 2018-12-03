@@ -10,7 +10,7 @@ if player_type.strip() == 'y':
   player = Human()
   (highest_tile, score) = player.play()
 else:
-  player = Bot('verbose')
+  player = Bot('quiet') # pass 'verbose' to print detailed info after each move
 
   # get number of games to play
   number_of_games = input("how many games would you like to play? (default: 100) ")
