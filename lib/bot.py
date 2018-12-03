@@ -4,14 +4,15 @@ import random
 import operator
 import itertools
 import math
+from strategy import *
 
 class Bot:
   def __init__(self, verbose = 'quiet'):
     self.directions = ['up', 'down', 'left', 'right']
     self.preferred_directions = ['up', 'left', 'right']
     self.strategies = [
-      {'name': 'random', 'func': self.strategy_random},
-      {'name': 'alex', 'func': self.strategy_alex},
+      {'name': 'random', 'func': Strategy},
+      {'name': 'alex', 'func': Alex},
       {'name': 'highest_move', 'func': self.strategy_max_move_score},
       {'name': 'forward_3', 'func': self.strategy_look_forward_3},
       {'name': 'forward_3_pref', 'func': self.strategy_look_forward_3_preferred},
@@ -30,9 +31,11 @@ class Bot:
   def play(self):
     self.game = Game()
     while not self.game.is_complete():
-      next_move = self.get_next_move()
+      
+      next_move = self.strategy.get_next_move()
       if (self.verbose):
         self.display(self.game.board)
+        self.display(self.strategy.game.board)
         print(next_move, self.game.highest_tile(), self.game.score)
       self.move(next_move)
     return {
@@ -51,7 +54,7 @@ class Bot:
       assert strategy >= 0 and strategy < len(self.strategies)
     except:
       strategy = self.default_strategy
-    self.strategy = self.strategies[strategy]['func']
+    self.strategy = self.strategies[strategy]['func'](self.game, self.directions)
     return self.strategies[strategy]['name']
 
   def list_strategies(self):
@@ -60,26 +63,8 @@ class Bot:
   def move(self, direction):
     self.game.move(direction)
 
-  # just change the strategy to change how the bot plays
-  def get_next_move(self):
-    return self.strategy()
-
   # define strategies
   # all strategies should return a member of self.directions (i.e. a string)
-  def strategy_random(self):
-    return random.choice(self.directions)
-
-  def strategy_alex(self):
-    """go up. if not up, go left. if not left, go right. never go down"""
-    # slight modification: sometimes you have to go down...
-    if self.game.move('up', fake = True) != self.game.board:
-      return 'up'
-    elif self.game.move('left', fake = True) != self.game.board:
-      return 'left'
-    elif self.game.move('right', fake = True) != self.game.board:
-      return 'right'
-    else:
-      return 'down'
 
   def strategy_max_move_score(self):
     results = []
@@ -93,35 +78,6 @@ class Bot:
     # fallback if
     #   no move will score
     if highest_value == 0:
-      highest_direction = self.strategy_alex()
-    return highest_direction
-
-  # the strategy here is to imitate the way a human might play
-  # this allows the bot to play through several potential futures on each turn
-  # and pick the one that is most profitable.
-  # The way this is implemented is sort of cheating but I think it's a valid
-  # approximation of the way a human might play
-  def predict_future_plays(self, sequences):
-    results = []
-    for sequence in sequences:
-      self.game.save()
-      result = { 'sequence': sequence, 'direction': sequence[0], 'score': 0 }
-      for direction in sequence:
-        before_board = self.game.board[:]
-        self.game.move(direction)
-        # if any move results in no change, then break
-        if before_board == self.game.board:
-          break
-      result['score'] = self.game.score
-      results.append(result)
-      self.game.reset()
-    highest = max(results, key=operator.itemgetter('score'))
-    highest_direction = highest['direction']
-    highest_value = highest['score']
-    # fallback if
-    #   no move will score
-    #   moving in the best "long term" way does not result in a change
-    if highest_value == 0 or self.game.move(highest_direction, fake = True) == self.game.board:
       highest_direction = self.strategy_alex()
     return highest_direction
 
