@@ -9,6 +9,7 @@ class Game:
     self.collapse_line = compose(self.sort_zeros, self.combine_adjacent, self.sort_zeros)
     self.score = 0
     self.score_move = 0
+    self.previous_move = None
 
   def generate(self):
     return [
@@ -53,7 +54,9 @@ class Game:
     if fake:
       return new_board
     elif self.board != new_board:
-      # set the board to the pieces
+      # set previous move so self.back() will work
+      self.previous_move = self.board[:]
+      # set the board to the new pieces
       self.board = new_board
       # find a random index that is currently "0" and make it a "2"
       zero_pieces = filter(lambda tuple: tuple[1] == 0, enumerate(self.board))
@@ -63,11 +66,13 @@ class Game:
       # add score
       self.score += self.score_move
       self.score_move = 0
-      return self.board
+    return self.board
 
   def move(self, direction, fake = False):
     self.score_move = 0
-    if direction == 'up':
+    if direction == 'back':
+      return self.back()
+    elif direction == 'up':
       lines = self.group('columns')
       new_lines = list_map(self.collapse_line, lines)
       return self.update(self.ungroup('columns', new_lines), fake)
@@ -83,6 +88,13 @@ class Game:
       lines = list_map(reversed, self.group('rows'))
       new_lines = list_map(self.collapse_line, lines)
       return self.update(self.ungroup('rows', list_map(reversed, new_lines)), fake)
+
+  def back(self):
+    if (self.previous_move != None):
+      self.board = self.previous_move[:]
+      # only allow going back once
+      self.previous_move = None
+    return self.board
 
   # this is kind of ugly but I can't figure out how to sort things in a more nuanced way
   # for [0, 2, 0, 4], returns [2, 4, 0, 0]
