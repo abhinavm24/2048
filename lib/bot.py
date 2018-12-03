@@ -6,7 +6,7 @@ import itertools
 import math
 
 class Bot:
-  def __init__(self):
+  def __init__(self, verbose = 'quiet'):
     self.directions = ['up', 'down', 'left', 'right']
     self.preferred_directions = ['up', 'left', 'right']
     self.strategies = [
@@ -25,12 +25,15 @@ class Bot:
     ]
     self.default_strategy = 2
     self.game = Game()
+    self.verbose = verbose == 'verbose'
 
   def play(self):
     self.game = Game()
     while not self.game.is_complete():
       next_move = self.get_next_move()
-      # print(next_move, self.game.highest_tile(), self.game.score, self.game.board)
+      if (self.verbose):
+        self.display(self.game.board)
+        print(next_move, self.game.highest_tile(), self.game.score)
       self.move(next_move)
     return {
       'highest_tile': self.game.highest_tile(),
@@ -56,7 +59,6 @@ class Bot:
 
   def move(self, direction):
     self.game.move(direction)
-    # print(direction)
 
   # just change the strategy to change how the bot plays
   def get_next_move(self):
