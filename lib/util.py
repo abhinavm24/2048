@@ -29,3 +29,8 @@ def display_board(board):
   for row in grouper(board, 4):
     print(' '.join(map(pad, row)))
     print()
+
+def dedupe(my_list):
+  # remove elements where the index of the first match is not the index of the item
+  # in other words, remove subsequent occurrences of a list item
+  return map(lambda tup: tup[1], filter(lambda tup: tup[0] == my_list.index(tup[1]), enumerate(my_list)))

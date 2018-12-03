@@ -4,8 +4,8 @@ sys.path.append('./lib')
 from functools import partial
 
 from game import Game
-from bot import Bot, dedupe
-from util import compose
+from bot import Bot
+from util import compose, dedupe
 
 game = Game()
 bot = Bot()
@@ -90,4 +90,4 @@ print('put_board_in_priority_order')
 
 board = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 bot.game.board = board
-assert bot.put_board_in_priority_order() == [0, 1, 2, 3, 7, 6, 5, 4, 8, 9, 10, 11, 15, 14, 13, 12], bot.put_board_in_priority_order()
+assert bot.prioritize_board() == [0, 1, 2, 3, 7, 6, 5, 4, 8, 9, 10, 11, 15, 14, 13, 12], bot.prioritize_board()
